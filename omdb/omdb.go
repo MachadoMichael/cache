@@ -22,31 +22,30 @@ type Movie struct {
 	Poster string `json:"Poster"`
 }
 
-func GetMovies(movie string) {
+func GetMovies(movie string) (SearchResponse, error) {
 	start := time.Now()
 	apiKey := "49288edd"
 	page := 1
-
+	var searchResponse SearchResponse
 	url := fmt.Sprintf("http://www.omdbapi.com/?apikey=%s&s=%s&page=%d", apiKey, movie, page)
 
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Error making HTTP request:", err)
-		return
+		return searchResponse, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return
+		return searchResponse, err
 	}
 
-	var searchResponse SearchResponse
 	err = json.Unmarshal(body, &searchResponse)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)
-		return
+		return searchResponse, err
 	}
 
 	fmt.Printf("Total results: %s\n", searchResponse.Total)
@@ -56,4 +55,6 @@ func GetMovies(movie string) {
 
 	elapse := time.Since(start)
 	fmt.Println("spent time: ", elapse)
+
+	return searchResponse, nil
 }
