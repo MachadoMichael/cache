@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 type SearchResponse struct {
@@ -23,7 +22,6 @@ type Movie struct {
 }
 
 func GetMovies(movie string) (SearchResponse, error) {
-	start := time.Now()
 	apiKey := "49288edd"
 	page := 1
 	var searchResponse SearchResponse
@@ -52,9 +50,6 @@ func GetMovies(movie string) (SearchResponse, error) {
 	for _, movie := range searchResponse.Search {
 		fmt.Printf("Title: %s, Year: %s, Type: %s\n", movie.Title, movie.Year, movie.Type)
 	}
-
-	elapse := time.Since(start)
-	fmt.Println("spent time: ", elapse)
 
 	return searchResponse, nil
 }

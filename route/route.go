@@ -15,9 +15,20 @@ func Init() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/omdb/{movie}", searchMovie)
 	mux.HandleFunc("/cache/{movie}", getCachedMovie)
+
+	srv := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+	}
+
+	srv.ListenAndServe()
+
 }
 
 func searchMovie(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
 	movie := r.PathValue("movie")
 
 	sr, err := omdb.GetMovies(movie)
@@ -43,6 +54,9 @@ func searchMovie(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(sr.Search)
+
+	elapsed := time.Since(start)
+	fmt.Println(elapsed)
 }
 
 func getCachedMovie(w http.ResponseWriter, r *http.Request) {
