@@ -70,9 +70,16 @@ func getCachedMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var movies []omdb.Movie
 	elapsed := time.Since(start)
 
+	json.Unmarshal([]byte(dataAsString), &movies)
+
+	for _, movie := range movies {
+		fmt.Println(movie.Title)
+	}
 	fmt.Println(elapsed)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(dataAsString)
+
 }
